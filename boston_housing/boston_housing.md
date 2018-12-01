@@ -127,75 +127,15 @@ for idx in data.columns:
     stats['mean'].append(np.mean(data[idx]))
     stats['median'].append(np.median(data[idx]))
     stats['std'].append(np.std(data[idx]))
-pd.DataFrame(stats, index = data.columns)
+print(pd.DataFrame(stats, index = data.columns))
 ```
 
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>min</th>
-      <th>max</th>
-      <th>mean</th>
-      <th>median</th>
-      <th>std</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>RM</th>
-      <td>3.561</td>
-      <td>8.398</td>
-      <td>6.240288</td>
-      <td>6.185</td>
-      <td>0.642991</td>
-    </tr>
-    <tr>
-      <th>LSTAT</th>
-      <td>1.980</td>
-      <td>37.970</td>
-      <td>12.939632</td>
-      <td>11.690</td>
-      <td>7.074745</td>
-    </tr>
-    <tr>
-      <th>PTRATIO</th>
-      <td>12.600</td>
-      <td>22.000</td>
-      <td>18.516564</td>
-      <td>19.100</td>
-      <td>2.109108</td>
-    </tr>
-    <tr>
-      <th>MEDV</th>
-      <td>105000.000</td>
-      <td>1024800.000</td>
-      <td>454342.944785</td>
-      <td>438900.000</td>
-      <td>165171.131544</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
+                    min          max           mean      median            std
+    RM            3.561        8.398       6.240288       6.185       0.642991
+    LSTAT         1.980       37.970      12.939632      11.690       7.074745
+    PTRATIO      12.600       22.000      18.516564      19.100       2.109108
+    MEDV     105000.000  1024800.000  454342.944785  438900.000  165171.131544
+    
 
 ----
 
@@ -534,7 +474,7 @@ vs.PredictTrials(features, prices, fit_model, client_data)
     Trial 2: $419,700.00
     Trial 3: $415,800.00
     Trial 4: $420,622.22
-    Trial 5: $413,334.78
+    Trial 5: $418,377.27
     Trial 6: $411,931.58
     Trial 7: $399,663.16
     Trial 8: $407,232.00
