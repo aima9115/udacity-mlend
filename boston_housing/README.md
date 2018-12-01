@@ -60,19 +60,19 @@ In the code cell below, you will need to implement the following:
 
 ```python
 # TODO: Minimum price of the data
-minimum_price = prices.min()
+minimum_price = np.min(prices)
 
 # TODO: Maximum price of the data
-maximum_price = prices.max()
+maximum_price = np.max(prices)
 
 # TODO: Mean price of the data
-mean_price = prices.mean()
+mean_price = np.mean(prices)
 
 # TODO: Median price of the data
-median_price = prices.median()
+median_price = np.median(prices)
 
 # TODO: Standard deviation of prices of the data
-std_price = prices.std()
+std_price = np.std(prices)
 
 # Show the calculated statistics
 print("Statistics for Boston housing dataset:\n")
@@ -89,7 +89,7 @@ print("Standard deviation of prices: ${}".format(std_price))
     Maximum price: $1024800.0
     Mean price: $454342.9447852761
     Median price $438900.0
-    Standard deviation of prices: $165340.27765266784
+    Standard deviation of prices: $165171.13154429474
     
 
 ### Question 1 - Feature Observation
@@ -110,6 +110,32 @@ As a reminder, we are using three features from the Boston housing dataset: `'RM
 - *Considering 'RM' I would expect that a house that has a grater value will cost more than one that has lower value for 'RM', that's because houses with more rooms tend to be bigger, although counterintuitively, there could be a case where a house with lower value in 'RM' could cost more in a nicer neighborhood, i.e. low 'LSTAT' percentage.*
 - *Considering 'LSTAT', it has been widely aknowlaged that houses in neighborhoods where there is higher percentage of low class homeowners cost less than the houses in neighborhoods where there is lower percentage of low class homeowners. That might be due better services, people pay their taxes, there are more attractions, cleaner streets, better security, etc.*
 - *A 'PTRATIO' could not be very intuitive at a glance, but I would expect to see an increase in 'MEDV' when the 'PTRATIO' decreases, because a social phenomenon known as Maslow's pyramid. Size of the upper class category (top of the pyramid) is much more smaller than the size of the pyramid base which is represented by the lower class group. This will cause to have more lower class students condensed in overpopulated areas where school services will be insufficient, having a higher student to teacher ratio.*
+
+
+```python
+# I wanted to see more info about the data and help me justify answer for question 10.
+stats = {
+    'min': list(),
+    'max': list(),
+    'mean': list(),
+    'median': list(),
+    'std': list()
+}
+for idx in data.columns:
+    stats['min'].append(np.min(data[idx]))
+    stats['max'].append(np.max(data[idx]))
+    stats['mean'].append(np.mean(data[idx]))
+    stats['median'].append(np.median(data[idx]))
+    stats['std'].append(np.std(data[idx]))
+print(pd.DataFrame(stats, index = data.columns))
+```
+
+                    min          max           mean      median            std
+    RM            3.561        8.398       6.240288       6.185       0.642991
+    LSTAT         1.980       37.970      12.939632      11.690       7.074745
+    PTRATIO      12.600       22.000      18.516564      19.100       2.109108
+    MEDV     105000.000  1024800.000  454342.944785  438900.000  165171.131544
+    
 
 ----
 
@@ -224,7 +250,7 @@ vs.ModelLearning(features, prices)
 ```
 
 
-![png](output_21_0.png)
+![png](output_22_0.png)
 
 
 ### Question 4 - Learning the Data
@@ -252,7 +278,7 @@ vs.ModelComplexity(X_train, y_train)
 ```
 
 
-![png](output_25_0.png)
+![png](output_26_0.png)
 
 
 ### Question 5 - Bias-Variance Tradeoff
@@ -426,7 +452,13 @@ for i, price in enumerate(reg.predict(client_data)):
 - *Client 2's home: `$`237,478.72*
 - *Client 2's home: `$`931,636.36*
 
-*It seems reasonable, looking at the house's size, we can see that the prices are matches, not proportionally since client 1's costs almost twice than client 2's house, and client 3's house costs more than twice client 1's house. Here we can see the effects of living in a good neighbor with private schools.*
+*Just below question 1, I added a piece of code that gets some stats for all features in the data and we can see that client 1's house predicted selling price is just below the mean 'MEDV' price as well as the number of rooms 'RM', feature that drags the selling price down. The other two features kind of balance the prediction, since the 'LSTAT' in client 1's house neighborhood is higher that the mean 'LSTAT' (which drags price down) and the 'PTRATIO' in the client's neighborhood is little bit better than the mean 'PTRATIO' (which increases the price).*
+
+*For client 2's house, the predicted selling price is not the lowest price, because the house is not in the poorest neighborhood, although the 'PTRATIO' is the highest, and the 'RM' is near the lowest. In that sense, the client 2's house might be overvalued, and the model is biased with the 'LSTAT' feature, or just the markets works that way, two times the lowest price, for just 5 points less in 'LSTAT' or 130,000 (almost the double) more just for a slightly richer neighborhood.*
+
+*For client 3's house, the predicted selling price is 70,000 lower than the highest price. The neighborhood poverty level is 1 point higher than the lowest and the number of rooms is almost the highest. The student-teacher ratio is the lowest. Again, 70,000 less just because is not in the richest neighborhood.*
+
+*Well, looking at client 1's house one might think that the model is congruent, but looking the extremes cases we can notice some bias.*
 
 ### Sensitivity
 An optimal model is not necessarily a robust model. Sometimes, a model is either too complex or too simple to sufficiently generalize to new data. Sometimes, a model could use a learning algorithm that is not appropriate for the structure of the data given. Other times, the data itself could be too noisy or contain too few samples to allow a model to adequately capture the target variable — i.e., the model is underfitted. 
@@ -442,7 +474,7 @@ vs.PredictTrials(features, prices, fit_model, client_data)
     Trial 2: $419,700.00
     Trial 3: $415,800.00
     Trial 4: $420,622.22
-    Trial 5: $413,334.78
+    Trial 5: $418,377.27
     Trial 6: $411,931.58
     Trial 7: $399,663.16
     Trial 8: $407,232.00
