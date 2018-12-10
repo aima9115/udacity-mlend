@@ -309,7 +309,9 @@ In this final section of the project, you will construct a model and make a pred
 
 **Hint:** When explaining the Grid Search technique, be sure to touch upon why it is used,  what the 'grid' entails and what the end goal of this method is. To solidify your answer, you can also give an example of a parameter in a model that can be optimized using this approach.
 
-**Answer:** *The grid search technique is a greedy method that helps us find the best hyperparameters' values based on a proposed score method. The search is done by passing the hyperparameters' values that we want our model to optimize with and the grid search technique tests the model with the combination of the parameters over the data. At end we have an N-dimensional table with the model's score using the giving parameters' values. E.g. assuming we want to find the best combination of (`degree`, `C`) values of a SVM classifier, we might get an output like this from the grid search:*
+**Answer:** *The grid search technique is a method that help us go through a grid of hyperparameters to configure the most optimal estimator possible for a given model. The grid contains every possible combination of the model's hyperparameters, the technique iterates over them, builds the estimator and cross-validates with the data to obtain the scores from those combinations. At the end we can end up with the most optimal estimator configured with the given hyperparameter's values.*
+
+*Assuming we want to find the best estimator for a SVM classifier, we have several hyperparameters to tune. Lets assume we want to train it with the `poly` kernel and the combination of parameters we need to tune are `degree` and `C`, where `degree` is the polynomial degree of the model and `C` is the penalty parameter of the error term. Let's let the grid search technique evaluate with `degree = {1, 2, 3, 4}` and `C = {0.1, 1, 10, 100}`. The grid search will test (1, 0.1), (1, 1), (1, 10) and so on. Different combinations can give us different models, and the grid search's aim is return the best estimator possible. The grid's scores are as show in table below.*
 
 | C\degree |  1  |  2  |  3  |  4  |
 |----------|-----|-----|-----|-----|
@@ -320,7 +322,7 @@ In this final section of the project, you will construct a model and make a pred
 
 ***Note: Don't know if the combination of values makes sense to a trained eye. It's just to ilustrate.***
 
-*From here we can conclude, the best `degree` is 3 and the best `C` is 0.1, because the score was 0.8, which was the highest.*
+*From here we can conclude that the best estimator will have `degree = 3` and `C = 0.1`, because the best score was 0.8.*
 
 ### Question 8 - Cross-Validation
 
@@ -332,9 +334,13 @@ In this final section of the project, you will construct a model and make a pred
 
 When thinking about how k-fold cross validation helps grid search, think about the main drawbacks of grid search which are hinged upon **using a particular subset of data for training or testing** and how k-fold cv could help alleviate that. You can refer to the [docs](http://scikit-learn.org/stable/modules/cross_validation.html#cross-validation) for your answer.
 
-**Answer:** *The k-fold cross-validation is a technique that helps us prevent lossing data when tunning the classifier's parameters without cheating. Normally, the best way to train a model is dividing the data into two or three sets, then the training is done with just one of them and the other two are used for testing and validation. One of the cons of doing this is that we hide data from the model and therefore the model might fail to capture or learn from the characteristics of the data. This could be potentially undesirable when we are doing supervised training with small datasets. In order to prevent this, k-fold allows us to train the data with all data points in a clever way. The dataset is split into k subsets of equal length and the model is trained with k-1 of those subsets while the testing is done with the last subset. We do this multiple times, alternating the subset used for testing and at the end the test results are averaged among al k testing iterations.*
+**Answer:**
 
-*Doing this with grid search can be beneficial because we can find the parameters that best fit the whole data and not just a subset of it. In this way we can capture, specially when using small datasets for supervised learning.*
+*In most training scenarios, the workflow consists in separate the data into two batches, the training set and the testing set. After a period of training, the model's performance is measured with the testing set to see how well the model generalized the problem with just the training data, but in practice, often than not we end up with an overfitted or underfitted model. K-fold technique would tell us the unbiased estimate of model generalization on unseen data and help us identify if our model is underfited or overfitted.*
+
+*K-fold technique consists in random partitioning the origial data into k subsets of equal size that are used for training and for testing. In one round of training and testing, the model will be trained with k-1 subsets and the test will be done with the subset left out. This process will be repeated k times and for each round a different testing subset will be used. After performing all rounds of training and testing, the results will be averaged to produce a single estimation and all the observations would have been used once for testing.*
+
+*Doing the grid search using the train-test split approach can have some disadvantages because the resulting metrics over the possible combinations of hyperparameters can give us an optimum combination that will perform well in just that particular choice of training and testing sets. By using k-fold, we make sure that every observation of the data will be used for validation and therefore we will get rid of the bias in the resulting estimations.*
 
 ### Implementation: Fitting a Model
 Your final implementation requires that you bring everything together and train a model using the **decision tree algorithm**. To ensure that you are producing an optimized model, you will train the model using the grid search technique to optimize the `'max_depth'` parameter for the decision tree. The `'max_depth'` parameter can be thought of as how many questions the decision tree algorithm is allowed to ask about the data before making a prediction. Decision trees are part of a class of algorithms called *supervised learning algorithms*.
@@ -471,7 +477,7 @@ vs.PredictTrials(features, prices, fit_model, client_data)
 ```
 
     Trial 1: $391,183.33
-    Trial 2: $419,700.00
+    Trial 2: $424,935.00
     Trial 3: $415,800.00
     Trial 4: $420,622.22
     Trial 5: $418,377.27
@@ -481,7 +487,7 @@ vs.PredictTrials(features, prices, fit_model, client_data)
     Trial 9: $351,577.61
     Trial 10: $413,700.00
     
-    Range in prices: $69,044.61
+    Range in prices: $73,357.39
     
 
 ### Question 11 - Applicability
@@ -495,7 +501,7 @@ vs.PredictTrials(features, prices, fit_model, client_data)
 - Would data collected in an urban city like Boston be applicable in a rural city?
 - Is it fair to judge the price of an individual home based on the characteristics of the entire neighborhood?
 
-**Answer:** *First, this data is outdated. Inflation is important, because it adjusts the house price given the current purchasing power, but there are more important factors, like social, cultural, political, industrial and financial changes in the region. These factors change over time and can flip the market trends at any moment. Construction materials and techniques may have changed too. Given the last 10 predict trials, the price range is almost 17% of the mean predicted price from those trials. We can conclude that the data is insufficient or noisy to fit the data properly, and although we pick the best parameters given by our complexity curve and grid search technique, the model is still underfitted.*
+**Answer:** *First, this data is outdated. Inflation is important, because it adjusts the house price given the current purchasing power, but there are more important factors, like social, cultural, political, industrial and financial changes in the region. These factors change over time and can flip the market trends at any moment. Construction materials and techniques may have changed too. Given the last 10 predict trials, the price range is almost 17% of the 'MEDV' mean price. We can conclude that the data is insufficient or noisy to fit the data properly, and although we pick the best parameters given by our complexity curve and grid search technique, the model is still underfitted.*
 
 > **Note**: Once you have completed all of the code implementations and successfully answered each question above, you may finalize your work by exporting the iPython Notebook as an HTML document. You can do this by using the menu above and navigating to  
 **File -> Download as -> HTML (.html)**. Include the finished document along with this notebook as your submission.
